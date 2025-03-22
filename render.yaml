@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: xploader-pair
+    name: Senu-Md-pair
     build:
       command: npm install && npm run build
     start:
-      command: pm2 start index.js --watch --deep-monitoring --attach --name xploader
+      command: pm2 start index.js --watch --deep-monitoring --attach --name Senu-Md
     port: 3000
     environment:
       NODE_ENV: production
