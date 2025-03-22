@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
     async function XploaderPair() {
         const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
         try {
-            const XpbotsPair = makeWASocket({
+            const SdbotsPair = makeWASocket({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
@@ -75,17 +75,17 @@ router.get('/', async (req, res) => {
                 browser: Browsers.ubuntu('Edge'),
             });
 
-            if (!XpbotsPair.authState.creds.registered) {
+            if (!SdbotsPair.authState.creds.registered) {
                 await delay(1500);
                 const sanitizedNumber = phoneNumber.replace(/[^0-9]/g, '');
-                const code = await XpbotsPair.requestPairingCode(sanitizedNumber);
+                const code = await SdbotsPair.requestPairingCode(sanitizedNumber);
                 if (!res.headersSent) {
                     res.send({ code });
                 }
             }
 
-            XpbotsPair.ev.on('creds.update', saveCreds);
-            XpbotsPair.ev.on('connection.update', async (update) => {
+            SdbotsPair.ev.on('creds.update', saveCreds);
+            SdbotsPair.ev.on('connection.update', async (update) => {
                 const { connection, lastDisconnect } = update;
 
                 if (connection === 'open') {
@@ -96,23 +96,23 @@ router.get('/', async (req, res) => {
 
                         // Send the session ID to the user
                         const sessionId = megaUrl || 'Error: Mega URL not available';
-                        await XpbotsPair.sendMessage(XpbotsPair.user.id, { text: sessionId });
+                        await SdbotsPair.sendMessage(XpbotsPair.user.id, { text: sessionId });
                         console.log(`Session ID sent: ${sessionId}`);
                     } catch (error) {
                         console.error('Error during session handling:', error);
                     } finally {
                         // Clean up
-                        await XpbotsPair.ws.close();
+                        await SdbotsPair.ws.close();
                         removeFolder(sessionDir);
                     }
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     console.log('Reconnecting...');
                     await delay(10000);
-                    XploaderPair();
+                    Senu_Md_Pair();
                 }
             });
         } catch (error) {
-            console.error('Error in XploaderPair:', error);
+            console.error('Error in Senu_Md_Pair:', error);
             removeFolder(sessionDir);
             if (!res.headersSent) {
                 res.status(503).send({ code: 'Service Unavailable' });
@@ -120,7 +120,7 @@ router.get('/', async (req, res) => {
         }
     }
 
-    await XploaderPair();
+    await Senu_Md_Pair();
 });
 
 module.exports = router;
